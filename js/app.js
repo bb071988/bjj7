@@ -2,18 +2,11 @@
 var myKey = "AIzaSyAvY8gw_9m9K4kfUbASjxJWcgzVjkwImcQ";
 
 
-//try some hard coding to make this easier
 var technique ="";
 
-page = new Array();
-// page[0]= [''];
+var tokenArray = new Array();  // keep track of the page tokens in this array
 
-a = 0; // set global variable to reference page in array
-
-nextPage = '';
-
-
-//function waitForClick(){
+tokenIndex = 0;
 
 $('.search')
 
@@ -32,7 +25,7 @@ $('.search')
 
         else {alert('Technique cannot be blank');}
 
-        //a++
+        
 
     });  // end on click function ;
 
@@ -45,11 +38,10 @@ $('.next')
     //alert('page is set to ' + page);
     $('#response').empty();
 
-    alert('next page-a ' + page[a]);
+    
+    var curToken = getToken('N');
 
-    a++
-
-    search();
+    search(curToken);  // modify to pass the curToken
 
     
 
@@ -63,11 +55,11 @@ $('.prev')
     //alert('page is set to ' + page);
     $('#response').empty();
 
-    alert('prev page-a ' + page[a]);
+    //alert('prev page-a ' + page[a]);
 
-    a--
+    var curToken = getToken('P');
 
-    search();
+    search(curToken);  // modify to pass the curToken
 
     
 
@@ -99,16 +91,18 @@ function onYouTubeApiLoad() {
 
     //alert('onyoutube api ' + page[a]);
 
-    search();
+    curToken = 'blank'
+
+    search(curToken);
     
 }
 
-function search() {
+function search(curToken) {
 
-    console.log('in search function looking for page[a]' + page[a]);
-    console.log('in search function looking for page[a-1]' + page[a-1]);
+    //console.log('in search function looking for page[a]' + page[a]);
+    //console.log('in search function looking for page[a-1]' + page[a-1]);
 
-    if (a>0)
+    if (curToken == 'blank') // WILL NEED TO CHANGE BASED ON NEW GET PAGETOKEN FUNCTION
     {
 
     // Use the JavaScript client library to create a search.list() API call.
@@ -127,13 +121,13 @@ function search() {
 
     else {
 
-        alert('in the else and page[a] is'+ page[a])
+        //alert('in the else and page[a] is'+ page[a])
 
     // Use the JavaScript client library to create a search.list() API call.
     var request = gapi.client.youtube.search.list({
         dataType: "JSONP",
         //pageToken: page[a],
-        pageToken: nextPage,
+        pageToken: curToken,
         part: 'id, snippet',
         maxResults: '10',
         order: 'viewCount',
@@ -144,12 +138,7 @@ function search() {
     });
 
     };  
-    
-    // Send the request to the API server,
-    // and invoke onSearchRepsonse() with the response.
-    //alert('execute request');
-    //console.log('next page token ' + request.nextPageToken);
-    
+        
 
     request.execute(onSearchResponse);
 }
@@ -161,9 +150,9 @@ function onSearchResponse(response) {
 
     
     //page[a] = response.nextPageToken;
-    alert('adding next page token to array page[a] is ' + page[a] + ' nextPageToken is ' + response.nextPageToken);
-    page.push(response.nextPageToken);
-    console.log('in onSearchResponse looking for whats in page array' + page);
+    //alert('adding next page token to array page[a] is ' + page[a] + ' nextPageToken is ' + response.nextPageToken);
+   // page.push(response.nextPageToken);
+    //console.log('in onSearchResponse looking for whats in page array' + page);
 
     
     showResponse(response);
@@ -176,8 +165,8 @@ function showResponse(response) {
 
    //var pResponse = JSON.parse(response);
    
-  // var sResponse = JSON.stringify(response, '', 2);
-  // console.log(sResponse);
+  var sResponse = JSON.stringify(response, '', 2);
+  console.log(sResponse);
    //$.each(response.items, function(i, items) {
 
     //https://www.youtube.com/watch?v=3PqQGdjb_bk
@@ -204,6 +193,82 @@ function showResponse(response) {
         }
 
     }
+
+function getToken(buttonFlag) {
+    
+    if(buttonFlag == 'N')
+    {
+
+        if(!tokenArray[tokenIndex]) 
+        {
+
+            token = nextPage;
+
+            tokenArray[tokenIndex] = nextPage;
+        }
+
+        else 
+        {
+            token = tokenArray[tokenIndex];
+        };
+
+
+        tokenIndex += 1;
+
+        alert("token is " + token + 'token Index is ' + tokenIndex);
+                  
+
+        return(token);
+
+    }
+
+    else 
+
+    {
+
+        if(buttonFlag == 'P') 
+        {
+
+
+            alert('tokenarraytokenindex is ' + tokenArray[tokenIndex] + ' tokenIndex is ' + tokenindex);
+            if(!tokenArray[tokenIndex]) 
+            {
+
+                alert('Sorry - No previous page.  Will display current page');
+
+
+               return(tokenArray[tokenIndex]);
+            }
+
+        else {
+
+
+            tokenIndex -= 1;
+
+            return(tokenArray[tokenIndex]);
+             };
+
+         };
+
+    };
+
+    /* function addToCounter(){
+
+        if (isNaN(tokenIndex)){
+            tokenIndex = 1;
+        }
+        
+        else {
+        tokenIndex += 1;
+         };
+
+        return(tokenIndex);
+    }; */
+
+
+
+
+};
    //document.getElementById('response').innerHTML += responseString;
 
   /*  $.each(responseString.items, function(i, item) {
