@@ -59,6 +59,8 @@ $('.prev')
 
     var curToken = getToken('P');
 
+    alert('justbeforesearch ' + curToken);
+
     search(curToken);  // modify to pass the curToken
 
     
@@ -229,21 +231,25 @@ function getToken(buttonFlag) {
         if(buttonFlag == 'P') 
         {
 
+            alert('tokenindex in buttonflag if ' + tokenIndex);
 
-            alert('tokenarraytokenindex is ' + tokenArray[tokenIndex] + ' tokenIndex is ' + tokenindex);
+
+            alert('tokenarraytokenindex minus 1 is ' + tokenArray[tokenIndex-1] + ' tokenIndex is ' + tokenIndex);
             if(!tokenArray[tokenIndex]) 
             {
 
                 alert('Sorry - No previous page.  Will display current page');
 
 
-               return(tokenArray[tokenIndex]);
+               return(tokenArray[tokenIndex -1]);
             }
 
         else {
 
 
             tokenIndex -= 1;
+
+            alert('tokenarraytokenindex is ' + tokenArray[tokenIndex] + ' tokenIndex is ' + tokenIndex);
 
             return(tokenArray[tokenIndex]);
              };
